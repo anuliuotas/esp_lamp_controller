@@ -109,15 +109,8 @@ void loop()
     } else {
       fan_pwm = 0;
     }
-    analogWrite(FAN_PIN, 100);
-  //   for(int i=0; i<255; i++){
-  //   analogWrite(FAN_PIN, i);
-  //   delay(5);
-  // }
-  // for(int i=255; i>0; i--){
-  //   analogWrite(FAN_PIN, i);
-  //   delay(5);
-  // }
+    analogWrite(FAN_PIN, 255);
+
   }
 
   if (currentMillis - previous_millis_notification >= interval_notification)
