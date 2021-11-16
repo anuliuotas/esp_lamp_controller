@@ -43,14 +43,16 @@ float linear_fan_control_b = fan_pwm_min - linear_fan_control_slope * dT_min;
 void setup()
 {
   Serial.begin(9600);
-  pinMode(LED_PIN_1, INPUT);
-  pinMode(LED_PIN_2, INPUT);
+  pinMode(LED_PIN_1, OUTPUT);
+  pinMode(LED_PIN_2, OUTPUT);
+  pinMode(FAN_PIN, OUTPUT);
 
   r.begin(ROTARY_PIN1, ROTARY_PIN2, CLICKS_PER_STEP, MIN_POS, MAX_POS, START_POS, INCREMENT);
   r.setChangedHandler(encoderAction);
 
   analogWrite(LED_PIN_1, r.getPosition());
   analogWrite(LED_PIN_2, r.getPosition());
+  analogWrite(FAN_PIN, 0);
 
   communication_setup();
 }
@@ -67,6 +69,7 @@ const long interval_fan_speed = interval_led_temperature; // interval at which t
 
 unsigned long previous_millis_notification = 0;
 const long interval_notification = 5000; // interval at which to send data
+
 
 void loop()
 {
@@ -103,8 +106,18 @@ void loop()
       {
         fan_pwm = linear_fan_control_slope * dT + linear_fan_control_b;
       }
+    } else {
+      fan_pwm = 0;
     }
-    analogWrite(FAN_PIN, fan_pwm);
+    analogWrite(FAN_PIN, 100);
+  //   for(int i=0; i<255; i++){
+  //   analogWrite(FAN_PIN, i);
+  //   delay(5);
+  // }
+  // for(int i=255; i>0; i--){
+  //   analogWrite(FAN_PIN, i);
+  //   delay(5);
+  // }
   }
 
   if (currentMillis - previous_millis_notification >= interval_notification)
@@ -113,7 +126,9 @@ void loop()
 
     send_current_status(temp_c, fan_pwm, led_pwm);
   }
+
 }
+
 
 void encoderAction(ESPRotary &r)
 {
